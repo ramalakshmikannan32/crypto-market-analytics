@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, DateTime
+from datetime import datetime
+
 from app.database.database import Base
 
 
@@ -10,3 +12,4 @@ class Market(Base):
     name = Column(String)
     price = Column(Float)
     volume = Column(Float)
+    timestamp = Column(DateTime, default=datetime.utcnow)
