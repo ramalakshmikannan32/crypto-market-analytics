@@ -15,6 +15,7 @@ export default function Home() {
   const [markets, setMarkets] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState<any[]>([]);
   const [strategy, setStrategy] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchMarkets();
@@ -71,6 +72,10 @@ export default function Home() {
     fetchStrategy();
   };
 
+  const filteredMarkets = markets.filter((coin) =>
+    coin.symbol.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <main className="min-h-screen bg-black text-white p-8">
       <div className="max-w-7xl mx-auto space-y-10">
@@ -112,6 +117,16 @@ export default function Home() {
           ))}
         </div>
 
+        <div className="flex justify-between items-center">
+          <input
+            type="text"
+            placeholder="Search coin..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 w-full md:w-96 text-white outline-none"
+          />
+        </div>
+
         <section className="bg-zinc-900 rounded-2xl p-6 border border-zinc-800">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">
@@ -129,7 +144,7 @@ export default function Home() {
             </thead>
 
             <tbody>
-              {markets.map((coin) => (
+              {filteredMarkets.map((coin) => (
                 <tr
                   key={coin.id}
                   className="border-b border-zinc-800"
@@ -244,9 +259,9 @@ export default function Home() {
 
           <div className="w-full">
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={markets}>
-                <XAxis dataKey="symbol" />
-                <YAxis />
+              <LineChart data={filteredMarkets}>
+                <XAxis dataKey="symbol" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
                 <Tooltip />
 
                 <Line
