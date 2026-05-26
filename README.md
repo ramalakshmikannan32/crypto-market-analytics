@@ -1,6 +1,6 @@
 # Crypto Analytics Dashboard
 
-A full-stack cryptocurrency analytics platform built using FastAPI, Next.js, SQLite, and Binance API.
+A full-stack cryptocurrency analytics platform built using FastAPI, Next.js, SQLite, and CoinGecko API.
 
 The platform provides real-time cryptocurrency market tracking, historical analytics, trading strategy signals, and interactive dashboard visualizations.
 
@@ -25,7 +25,7 @@ The platform provides real-time cryptocurrency market tracking, historical analy
 - FastAPI
 - SQLAlchemy
 - SQLite
-- Binance API
+- CoinGecko API
 
 ### Frontend
 - Next.js
@@ -37,7 +37,7 @@ The platform provides real-time cryptocurrency market tracking, historical analy
 
 ## Architecture
 
-Binance API → FastAPI Backend → SQLite Database → Analytics & Strategy Engine → Next.js Frontend Dashboard
+CoinGecko API → POST /markets/save → SQLite Database → Analytics & Strategy Engine → Next.js Frontend Dashboard
 
 ---
 

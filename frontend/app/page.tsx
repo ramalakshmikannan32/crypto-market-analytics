@@ -22,14 +22,6 @@ export default function Home() {
     fetchMarkets();
     fetchAnalytics();
     fetchStrategy();
-
-    const interval = setInterval(() => {
-      fetchMarkets();
-      fetchAnalytics();
-      fetchStrategy();
-    }, 10000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const BASE = "https://crypto-market-analytics.onrender.com";
