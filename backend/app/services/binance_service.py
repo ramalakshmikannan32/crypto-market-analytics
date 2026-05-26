@@ -10,14 +10,19 @@ def fetch_market_data():
     results = []
 
     for symbol in SYMBOLS:
-        response = requests.get(f"https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}")
+        url = f"https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}"
+        response = requests.get(url)
         data = response.json()
+
+        if "lastPrice" not in data:
+            print("Binance API Error:", data)
+            continue
 
         results.append({
             "symbol": symbol.replace("USDT", "").lower(),
             "name": symbol.replace("USDT", ""),
-            "price": float(data["lastPrice"]),
-            "volume": float(data["volume"]),
+            "price": float(data.get("lastPrice", 0)),
+            "volume": float(data.get("volume", 0)),
         })
 
     return results
