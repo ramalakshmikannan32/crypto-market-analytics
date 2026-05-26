@@ -11,7 +11,7 @@ from app.strategy.market_strategy import (
     run_strategy,
     get_strategy_results
 )
-from app.models.market import Base
+from app.models.market import Base, Market
 from app.services.coingecko_service import (
     fetch_market_data,
     save_market_data,
