@@ -18,7 +18,11 @@ from app.services.coingecko_service import (
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title="Crypto Market Analytics API",
+    description="Real-time cryptocurrency analytics platform with market history, analytics engine, and trading strategy signals.",
+    version="1.0.0",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -27,21 +31,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.get("/", tags=["System"])
 async def root():
     return {"message": "Crypto Analytics API Running"}
 
 
-@app.get("/markets")
+@app.get("/markets", tags=["Markets"])
 async def get_markets():
     return fetch_market_data()
 
 
-@app.post("/markets/save")
+@app.post("/markets/save", tags=["Markets"])
 async def save_markets(db: Session = Depends(get_db)):
     return save_market_data(db)
 
-@app.get("/history")
+@app.get("/history", tags=["History"])
 async def market_history(
     symbol: str,
     limit: int = 10,
@@ -49,15 +53,15 @@ async def market_history(
 ):
     return get_market_history(db, symbol, limit)
 
-@app.get("/analytics")
+@app.get("/analytics", tags=["Analytics"])
 async def analytics(db: Session = Depends(get_db)):
     return calculate_analytics(db)
 
-@app.post("/strategy/run")
+@app.post("/strategy/run", tags=["Strategy"])
 async def execute_strategy(db: Session = Depends(get_db)):
     return run_strategy(db)
 
 
-@app.get("/strategy/results")
+@app.get("/strategy/results", tags=["Strategy"])
 async def strategy_results():
     return get_strategy_results()
