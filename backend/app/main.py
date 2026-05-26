@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
@@ -18,10 +20,25 @@ from app.services.coingecko_service import (
 
 Base.metadata.create_all(bind=engine)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    from app.database.session import SessionLocal
+    db = SessionLocal()
+    try:
+        save_market_data(db)
+    except Exception:
+        pass
+    finally:
+        db.close()
+    yield
+
+
 app = FastAPI(
     title="Crypto Market Analytics API",
     description="Real-time cryptocurrency analytics platform with market history, analytics engine, and trading strategy signals.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 app.add_middleware(
     CORSMiddleware,
