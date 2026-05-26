@@ -88,3 +88,26 @@ async def execute_strategy(db: Session = Depends(get_db)):
 @app.get("/strategy/results", tags=["Strategy"])
 async def strategy_results():
     return get_strategy_results()
+
+
+@app.post("/seed", tags=["System"])
+def seed_data(db: Session = Depends(get_db)):
+    sample_data = [
+        {"symbol": "btc", "name": "Bitcoin", "price": 77000, "volume": 24000000000},
+        {"symbol": "eth", "name": "Ethereum", "price": 2100, "volume": 10000000000},
+        {"symbol": "bnb", "name": "BNB", "price": 660, "volume": 5000000000},
+        {"symbol": "sol", "name": "Solana", "price": 85, "volume": 3000000000},
+        {"symbol": "xrp", "name": "XRP", "price": 1.35, "volume": 2000000000},
+    ]
+
+    for coin in sample_data:
+        market = Market(
+            symbol=coin["symbol"],
+            name=coin["name"],
+            price=coin["price"],
+            volume=coin["volume"],
+        )
+        db.add(market)
+
+    db.commit()
+    return {"message": "Sample data inserted"}
