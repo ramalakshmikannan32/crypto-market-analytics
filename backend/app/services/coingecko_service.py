@@ -3,20 +3,24 @@ from sqlalchemy.orm import Session
 
 from app.models.market import Market
 
-COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets"
+SYMBOLS = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT"]
 
 
 def fetch_market_data():
-    params = {
-        "vs_currency": "usd",
-        "order": "market_cap_desc",
-        "per_page": 10,
-        "page": 1
-    }
+    results = []
 
-    response = requests.get(COINGECKO_URL, params=params)
+    for symbol in SYMBOLS:
+        response = requests.get(f"https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}")
+        data = response.json()
 
-    return response.json()
+        results.append({
+            "symbol": symbol.replace("USDT", "").lower(),
+            "name": symbol.replace("USDT", ""),
+            "price": float(data["lastPrice"]),
+            "volume": float(data["volume"]),
+        })
+
+    return results
 
 
 def save_market_data(db: Session):
@@ -26,8 +30,8 @@ def save_market_data(db: Session):
         market = Market(
             symbol=coin["symbol"],
             name=coin["name"],
-            price=coin["current_price"],
-            volume=coin["total_volume"]
+            price=coin["price"],
+            volume=coin["volume"]
         )
 
         db.add(market)
@@ -35,7 +39,8 @@ def save_market_data(db: Session):
     db.commit()
 
     return {"message": "Market data saved successfully"}
-    
+
+
 def get_market_history(db: Session, symbol: str, limit: int):
     history = (
         db.query(Market)
