@@ -15,7 +15,13 @@ def fetch_market_data():
     }
 
     response = requests.get(COINGECKO_URL, params=params)
-    return response.json()
+    data = response.json()
+
+    if not isinstance(data, list):
+        print("CoinGecko API Error:", data)
+        return []
+
+    return data
 
 
 def save_market_data(db: Session):
