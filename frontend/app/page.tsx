@@ -16,6 +16,7 @@ export default function Home() {
   const [analytics, setAnalytics] = useState<any[]>([]);
   const [strategy, setStrategy] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchMarkets();
@@ -31,50 +32,50 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  const BASE = "https://crypto-market-analytics.onrender.com";
+
   const fetchMarkets = async () => {
-    const response = await fetch(
-      "http://127.0.0.1:8000/markets"
-    );
-
+    const response = await fetch(`${BASE}/markets/stored`);
     const data = await response.json();
-
-    setMarkets(Array.isArray(data) ? data : []);
+    const normalized = Array.isArray(data)
+      ? data.map((coin: any) => ({
+          ...coin,
+          current_price: coin.current_price ?? coin.price,
+          total_volume: coin.total_volume ?? coin.volume,
+        }))
+      : [];
+    setMarkets(normalized);
+    setLoading(false);
   };
 
   const fetchAnalytics = async () => {
-    const response = await fetch(
-      "http://127.0.0.1:8000/analytics"
-    );
-
+    const response = await fetch(`${BASE}/analytics`);
     const data = await response.json();
-
     setAnalytics(Array.isArray(data) ? data : []);
   };
 
   const fetchStrategy = async () => {
-    const response = await fetch(
-      "http://127.0.0.1:8000/strategy/results"
-    );
-
+    const response = await fetch(`${BASE}/strategy/results`);
     const data = await response.json();
-
     setStrategy(Array.isArray(data) ? data : []);
   };
 
   const runStrategy = async () => {
-    await fetch(
-      "http://127.0.0.1:8000/strategy/run",
-      {
-        method: "POST",
-      }
-    );
-
+    await fetch(`${BASE}/strategy/run`, { method: "POST" });
     fetchStrategy();
   };
 
   const filteredMarkets = markets.filter((coin) =>
     coin.symbol.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <h1 className="text-3xl font-bold animate-pulse">Loading Dashboard...</h1>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-black text-white p-8">

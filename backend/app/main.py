@@ -45,6 +45,12 @@ async def get_markets():
 async def save_markets(db: Session = Depends(get_db)):
     return save_market_data(db)
 
+@app.get("/markets/stored", tags=["Markets"])
+async def get_stored_markets(db: Session = Depends(get_db)):
+    from app.models.market import Market
+    return db.query(Market).order_by(Market.timestamp.desc()).all()
+
+
 @app.get("/history", tags=["History"])
 async def market_history(
     symbol: str,
