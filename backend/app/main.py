@@ -12,7 +12,7 @@ from app.strategy.market_strategy import (
     get_strategy_results
 )
 from app.models.market import Base
-from app.services.coingecko_service import (
+from app.services.binance_service import (
     fetch_market_data,
     save_market_data,
     get_market_history
